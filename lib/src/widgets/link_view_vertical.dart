@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 
 class LinkViewVertical extends StatelessWidget {
   final String url;
@@ -66,7 +68,16 @@ class LinkViewVertical extends StatelessWidget {
             fontWeight: FontWeight.w400,
           );
 
-      ImageProvider? _img = imageUri != '' ? NetworkImage(imageUri) : null;
+      ImageProvider? _img = imageUri != ''
+          ? CachedNetworkImageProvider(
+              imageUri,
+              headers: {
+                'Access-Control-Allow-Headers':
+                    'Access-Control-Allow-Origin, Accept'
+              },
+              imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
+            )
+          : null;
       if (imageUri.startsWith('data:image')) {
         _img = MemoryImage(
           base64Decode(imageUri.substring(imageUri.indexOf('base64') + 7)),
